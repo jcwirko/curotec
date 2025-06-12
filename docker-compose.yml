@@ -1,0 +1,119 @@
+services:
+  # ##############################
+  # ###### SETUP AND BASE SERVICES
+  # ##############################
+
+  ## Laravel builder
+  curotec-laravel-builder:
+    build:
+      context: ./docker/php
+      args:
+        USER_ID: ${USER_ID:-0}
+        GROUP_ID: ${GROUP_ID:-0}
+    user: www-data:www-data
+    container_name: curotec-laravel-builder
+    restart: no
+    volumes:
+      - type: bind
+        source: ./
+        target: ${BACKEND_CONTAINER_PATH}
+    working_dir: ${BACKEND_CONTAINER_PATH}
+    environment:
+      APP_DIRECTORY: ${BACKEND_CONTAINER_PATH}
+    depends_on:
+      curotec-postgres:
+        condition: service_healthy
+    networks:
+      - backend
+    profiles:
+      - builder
+
+  # #######################
+  # ###### BACKEND SERVICES
+  # #######################
+
+  ## Nginx container
+  curotec-nginx:
+    container_name: curotec-nginx
+    build:
+      context: ./docker/nginx
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      curotec-php:
+        condition: service_healthy
+    ports:
+      - protocol: tcp
+        published: ${NGINX_PORT-80}
+        target: 80
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    networks:
+      - backend
+
+  ## PHP container for regular execution (contains and runs the Laravel base
+  curotec-php:
+    container_name: curotec-php
+    build:
+      context: ./docker/php
+      args:
+        USER_ID: ${USER_ID:-0}
+        GROUP_ID: ${GROUP_ID:-0}
+    user: www-data:www-data
+    depends_on:
+      curotec-postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    expose:
+      - 9000
+    volumes:
+      - type: bind
+        source: ./
+        target: ${BACKEND_CONTAINER_PATH}
+    working_dir: ${BACKEND_CONTAINER_PATH}
+    healthcheck:
+      test: ["CMD", "php-fpm-healthcheck"]
+      interval: 15s
+      timeout: 5s
+      retries: 150
+    networks:
+      - backend
+
+  # #########################
+  # ###### DATABASES SERVICES
+  # #########################
+
+  ## PostgreSQL database
+  curotec-postgres:
+   image: postgres:15
+   container_name: curotec-postgres
+   restart: unless-stopped
+   volumes:
+    - type: volume
+      source: curotec_postgres
+      target: /var/lib/postgresql/data
+   ports:
+    - protocol: tcp
+      published: ${DB_PORT}
+      target: 5432
+   environment:
+    POSTGRES_DB: ${DB_DATABASE}
+    POSTGRES_USER: ${DB_USERNAME}
+    POSTGRES_PASSWORD: ${DB_PASSWORD}
+   healthcheck:
+    test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME}"]
+    interval: 30s
+    timeout: 10s
+    retries: 5
+   networks:
+    - backend
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  curotec_postgres: {}
