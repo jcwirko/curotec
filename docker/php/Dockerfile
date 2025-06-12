@@ -2,9 +2,9 @@ FROM php:8.3-fpm
 
 LABEL maintainer="Juan Blariza"
 
-ARG path=/var/www/curotec/
+ARG path=/var/www/curotec
 
-#INSTALL DEPENDENCIES
+# INSTALL DEPENDENCIES
 RUN apt-get update && apt-get install -y \
     openssl \
     build-essential \
@@ -21,56 +21,49 @@ RUN apt-get update && apt-get install -y \
     nano \
     libonig-dev \
     supervisor \
-    zip
+    zip \
+    libpq-dev
 
-#PGSQL
-RUN apt-get install -y libpq-dev \
-    && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
+# PGSQL
+RUN docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
     && docker-php-ext-install pdo pdo_pgsql pgsql
 
-#REDIS
-RUN pecl install -o -f redis \
-        &&  rm -rf /tmp/pear \
-        &&  docker-php-ext-enable redis
-
-# Configure php extensions
+# CONFIGURE PHP EXTENSIONS
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 
-#Libraries required for Laravel
+# LIBRARIES REQUIRED FOR LARAVEL (sin MySQL)
 RUN docker-php-ext-install \
-    pdo_mysql \
     bcmath \
     ctype \
     fileinfo \
     iconv \
     gd \
     mbstring \
-    pdo_mysql \
     xml \
     pcntl
 
-# Install composer
+# INSTALL COMPOSER
 RUN php -r "readfile('https://getcomposer.org/installer');" | php -- --install-dir=/usr/bin/ --filename=composer
 
-# PHP Error Log Files
+# PHP ERROR LOG FILES
 RUN mkdir /var/log/php && \
     touch /var/log/php/errors.log &&  \
     touch /var/log/php/access.log &&  \
     chmod 775 /var/log/php/errors.log
 
-# Queue Error log files
+# QUEUE ERROR LOG FILES
 RUN mkdir /var/log/curotec && \
     touch /var/log/curotec/worker.log &&  \
     chmod 775 /var/log/curotec/worker.log
 
-
+# APP FILES
 COPY ./ $path
 
 WORKDIR $path
 
 RUN chmod -R 755 storage bootstrap/cache
 
-RUN chown -R $USER:www-data ./
+RUN chown -R www-data:www-data ./
 RUN chgrp -R www-data storage bootstrap/cache
 RUN chmod -R ug+rwx storage bootstrap/cache
 
