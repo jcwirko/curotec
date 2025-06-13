@@ -42,8 +42,11 @@ class TaskController extends Controller
      */
     public function store(TaskRequest $request): JsonResponse
     {
-        $taskInstance = $this->taskFactory->getInstance($request->all());
-        $task = $this->taskRepository->save($taskInstance);
+        $data = $request->all();
+
+        $taskInstance = $this->taskFactory->getInstance($data);
+
+        $task = $this->taskRepository->saveWithCategories($taskInstance, $data['category_ids'] ?? []);
 
         return (new TaskResource($task))->response()->setStatusCode(201);
     }
@@ -70,9 +73,12 @@ class TaskController extends Controller
      */
     public function update(TaskRequest $request, int $taskId): JsonResponse
     {
+        $data = $request->all();
+
         $task = $this->taskRepository->get($taskId);
-        $task->fill($request->all());
-        $updatedTask = $this->taskRepository->save($task);
+        $task->fill($data);
+
+        $updatedTask = $this->taskRepository->saveWithCategories($task, $data['category_ids'] ?? []);
 
         return (new TaskResource($updatedTask))->response();
     }

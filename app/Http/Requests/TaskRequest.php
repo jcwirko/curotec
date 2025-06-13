@@ -22,6 +22,8 @@ class TaskRequest extends BaseRequest
             'priority' => [Rule::in(TaskPriorityEnum::values())],
             'due_date' => ['nullable', 'date'],
             'is_completed' => ['boolean'],
+            'category_ids' => ['nullable', 'array'],
+            'category_ids.*' => ['integer', Rule::exists('categories', 'id')],
         ];
 
         if ($this->isMethod('post')) {
