@@ -1,72 +1,82 @@
-FROM php:8.3-fpm
+FROM php:8.3-fpm-alpine
 
-LABEL maintainer="Juan Blariza"
-
-ARG path=/var/www/curotec
-
-# INSTALL DEPENDENCIES
-RUN apt-get update && apt-get install -y \
-    openssl \
-    build-essential \
-    libfreetype6-dev \
-    libjpeg62-turbo-dev \
+RUN apk add --no-cache \
+    linux-headers \
+    freetype-dev \
+    libjpeg-turbo-dev \
+    libwebp-dev \
     libpng-dev \
-    locales \
-    apt-transport-https \
-    wget \
-    lsb-release \
+    curl-dev \
+    icu-dev \
     libxml2-dev \
-    ca-certificates \
     git \
-    nano \
-    libonig-dev \
-    supervisor \
-    zip \
-    libpq-dev
+    libzip-dev \
+    fcgi \
+    bash \
+    postgresql-client \
+    postgresql-dev \
+    nodejs \
+    npm
 
-# PGSQL
-RUN docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
-    && docker-php-ext-install pdo pdo_pgsql pgsql
+RUN docker-php-ext-configure gd --with-jpeg --with-webp
 
-# CONFIGURE PHP EXTENSIONS
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg
-
-# LIBRARIES REQUIRED FOR LARAVEL (sin MySQL)
 RUN docker-php-ext-install \
-    bcmath \
-    ctype \
-    fileinfo \
-    iconv \
+    curl \
+    intl \
     gd \
-    mbstring \
+    pdo \
+    pdo_pgsql \
+    pgsql \
+    simplexml \
     xml \
-    pcntl
+    soap \
+    bcmath \
+    pcntl \
+    zip
 
-# INSTALL COMPOSER
-RUN php -r "readfile('https://getcomposer.org/installer');" | php -- --install-dir=/usr/bin/ --filename=composer
+RUN apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS && \
+    pecl install xdebug && \
+    docker-php-ext-enable xdebug
 
-# PHP ERROR LOG FILES
-RUN mkdir /var/log/php && \
-    touch /var/log/php/errors.log &&  \
-    touch /var/log/php/access.log &&  \
-    chmod 775 /var/log/php/errors.log
+RUN pecl install redis && \
+    docker-php-ext-enable redis
 
-# QUEUE ERROR LOG FILES
-RUN mkdir /var/log/curotec && \
-    touch /var/log/curotec/worker.log &&  \
-    chmod 775 /var/log/curotec/worker.log
+## Composer
+RUN php -r 'copy("https://composer.github.io/installer.sig", "php://stdout");' > expected_checksum && \
+    php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
+    php -r "echo hash_file('sha384', 'composer-setup.php');" > actual_checksum && \
+    diff expected_checksum actual_checksum && \
+    php composer-setup.php --install-dir=/usr/local/bin --filename=composer --quiet && \
+    rm composer-setup.php expected_checksum actual_checksum
 
-# APP FILES
-COPY ./ $path
+## Healthcheck
+RUN wget -O /usr/local/bin/php-fpm-healthcheck \
+    https://raw.githubusercontent.com/renatomefi/php-fpm-healthcheck/master/php-fpm-healthcheck \
+    && chmod +x /usr/local/bin/php-fpm-healthcheck
 
-WORKDIR $path
+## Enable php fpm status page
+RUN set -xe && echo "pm.status_path = /status" >> /usr/local/etc/php-fpm.d/zz-docker.conf
 
-RUN chmod -R 755 storage bootstrap/cache
+## Cleanup
+RUN rm -rf /var/cache/apk/*
 
-RUN chown -R www-data:www-data ./
-RUN chgrp -R www-data storage bootstrap/cache
-RUN chmod -R ug+rwx storage bootstrap/cache
+COPY conf/php.ini /usr/local/etc/php/conf.d/zzz-overrides.ini
+COPY scripts/* /usr/local/bin/
+
+# Explicitly set executable permissions for all scripts
+RUN chmod +x /usr/local/bin/*
+
+ARG USER_ID
+ARG GROUP_ID
+
+RUN if [ ${USER_ID:-0} -ne 0 ] && [ ${GROUP_ID:-0} -ne 0 ]; then \
+  deluser www-data &&\
+  if getent group www-data ; then delgroup www-data; fi &&\
+  if getent group ${GROUP_ID} ; then delgroup $(getent group ${GROUP_ID} | cut -d: -f1); fi &&\
+  addgroup -g ${GROUP_ID} -S www-data; \
+  adduser -D -u ${USER_ID} -S -G www-data www-data \
+;fi
+
+USER www-data
 
 EXPOSE 9000
-
-CMD ["php-fpm"]
