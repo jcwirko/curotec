@@ -17,7 +17,6 @@
 ### Clone Repositories
 
 1. Clone the repository and submodules
-
    - `git clone git@github.com:jcwirko/curotec.git`
 
 2. Change the branches of the submodules
