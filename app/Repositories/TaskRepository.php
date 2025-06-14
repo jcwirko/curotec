@@ -14,6 +14,16 @@ class TaskRepository extends BaseRepository
         parent::__construct($task);
     }
 
+    public function getAllPaginated(int $perPage, array $filters = [])
+    {
+        return $this->model->with(self::RELATIONS)
+            ->category($filters['category_id'] ?? [])
+            ->priority($filters['priority'] ?? [])
+            ->isCompleted($filters['is_completed'] ?? [])
+            ->paginate($perPage);
+    }
+
+
     public function saveWithCategories(Task $task, array $categoryIds = [])
     {
         $task->save();

@@ -28,8 +28,11 @@ class TaskController extends Controller
      */
     public function index(): JsonResponse
     {
-        //$rowsPerPage = request()->has('per_page') ? request()->get('per_page') : config('app.pagination.per_page');
-        $tasks = $this->taskRepository->all();
+        $rowsPerPage = (int) request()->has('per_page') ? request()->get('per_page') : config('app.pagination.per_page');
+
+        $filters = request()->only(['is_completed', 'category_id', 'priority']); // lo que necesites filtrar
+
+        $tasks = $this->taskRepository->getAllPaginated($rowsPerPage, $filters);
 
         return TaskResource::collection($tasks)->response();
     }

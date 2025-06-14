@@ -34,4 +34,30 @@ class Task extends Model
     {
         return $this->belongsToMany(Category::class, 'category_task');
     }
+
+    public function scopeCategory($query, $categoryId)
+    {
+        if (!$categoryId) {
+            return $query;
+        }
+        return $query->whereHas('categories', function ($q) use ($categoryId) {
+            $q->where('categories.id', $categoryId);
+        });
+    }
+
+    public function scopePriority($query, $priority)
+    {
+        if (!$priority) {
+            return $query;
+        }
+        return $query->where('priority', $priority);
+    }
+
+    public function scopeIsCompleted($query, $isCompleted)
+    {
+        if (is_null($isCompleted)) {
+            return $query;
+        }
+        return $query->where('is_completed', filter_var($isCompleted, FILTER_VALIDATE_BOOLEAN));
+    }
 }
