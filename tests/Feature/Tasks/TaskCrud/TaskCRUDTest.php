@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Category;
 use App\Models\Task;
 use Carbon\Carbon;
 
@@ -62,7 +63,7 @@ test('it should get a tasks', function () {
     $this->assertEquals($newTask->updated_at->toJSON(), $task['updated_at']);
 });
 
-test('it should store a new task', function () {
+test('it should store a new task without categories', function () {
     $payload = [
         "title" => "my new task",
         "description" => "to make this task you should use laravel, vue and inertia",
@@ -97,4 +98,46 @@ test('it should store a new task', function () {
         Carbon::parse($payload['due_date'])->isSameDay(Carbon::parse($task['due_date']))
     );
     $this->assertEquals($payload['is_completed'], $task['is_completed']);
+});
+
+test('it should store a new task with categories', function () {
+    $categories = Category::factory()->count(5)->create();
+    $twoCategoryIds = $categories->random(2)->pluck('id')->toArray();
+
+    $payload = [
+        "title" => "my new task",
+        "description" => "to make this task you should use laravel, vue and inertia",
+        "priority" => "high",
+        "due_date" => "2024-10-13",
+        "is_completed" => false,
+        "category_ids" => $twoCategoryIds
+    ];
+
+    $response = $this->post("api/tasks", $payload);
+
+    $response->assertStatus(201);
+
+    $response->assertJsonStructure([
+        'data' => [
+            "id",
+            "title",
+            "description",
+            "priority",
+            "due_date",
+            "is_completed",
+            "created_at",
+            "updated_at"
+        ]
+    ]);
+
+    $task = $response->decodeResponseJson()['data'];
+
+    $this->assertEquals($payload['title'], $task['title']);
+    $this->assertEquals($payload['description'], $task['description']);
+    $this->assertEquals($payload['priority'], $task['priority']);
+    $this->assertTrue(
+        Carbon::parse($payload['due_date'])->isSameDay(Carbon::parse($task['due_date']))
+    );
+    $this->assertEquals($payload['is_completed'], $task['is_completed']);
+    $this->assertEquals(2, count($task['categories']));
 });
