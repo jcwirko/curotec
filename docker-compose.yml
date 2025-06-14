@@ -23,6 +23,8 @@ services:
     depends_on:
       curotec-postgres:
         condition: service_healthy
+      curotec-postgres-test:
+        condition: service_healthy
     networks:
       - backend
     profiles:
@@ -65,6 +67,8 @@ services:
     user: www-data:www-data
     depends_on:
       curotec-postgres:
+        condition: service_healthy
+      curotec-postgres-test:
         condition: service_healthy
     restart: unless-stopped
     expose:
@@ -111,9 +115,34 @@ services:
    networks:
     - backend
 
+  curotec-postgres-test:
+   image: postgres:15
+   container_name: curotec-postgres-test
+   restart: unless-stopped
+   volumes:
+    - type: volume
+      source: curotec_postgres_test
+      target: /var/lib/postgresql/data
+   ports:
+    - protocol: tcp
+      published: ${DB_PORT_TEST}
+      target: 5432
+   environment:
+      POSTGRES_DB: ${DB_DATABASE_TEST}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+   healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME}"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+   networks:
+      - backend
+
 networks:
   backend:
     driver: bridge
 
 volumes:
   curotec_postgres: {}
+  curotec_postgres_test: {}
