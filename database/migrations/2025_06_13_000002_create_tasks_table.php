@@ -16,9 +16,10 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('description')->nullable();
-            $table->enum('priority', TaskPriorityEnum::values())->default('low');
+            $table->enum('priority', TaskPriorityEnum::values())->default('low')->index();
             $table->date('due_date')->nullable();
-            $table->boolean('is_completed')->default(false);
+            $table->boolean('is_completed')->default(false)->index();
+
             $table->timestamps();
         });
     }
