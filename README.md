@@ -1,6 +1,5 @@
 # CUROTEC
 
-
 <hr style="height: 1px"/>
 
 ## Project
@@ -9,32 +8,27 @@
 
 # Instalation
 
-### Prerequisites
-
-- Node v22.14.0
-- Yarn v1.22.22
-
 ### Clone Repositories
 
 1. Clone the repository and submodules
-   - `git clone git@github.com:jcwirko/curotec.git`
+
+    - `git clone git@github.com:jcwirko/curotec.git`
 
 2. Change the branches of the submodules
-   - `cd curotec && git checkout main`
+    - `cd curotec && git checkout main`
 
 ### Setup
 
 1.  In path `/path/to/../curotec/`
-2.  In **_env** file fill in `USER_ID` and `GROUP_ID` with your user and group id. You can find them by running `id` in your terminal.
+2.  In **\_env** file fill in `USER_ID` and `GROUP_ID` with your user and group id. You can find them by running `id` in your terminal.
 3.  Run `make build-app` to build the backend containers.
-    - In case something fails, such as a seeder, the `make clean` command is executed to reset the environment, followed by `make build-app` to rebuild it.
+    -   In case something fails, such as a seeder, the `make clean` command is executed to reset the environment, followed by `make build-app` to rebuild it.
 4.  Run `make up` to start the containers
 
 ### Ports
 
-- **Backend** listens on port **7676**: http://localhost:5000.
-- **UI** listens on port **3000**: http://localhost:3000.
-- **Backend API**: `http://localhost:5000/api`
+-   **Backend API**: http://localhost:7676/api
+-   **UI** listens on port **7676**: http://localhost:7676.
 
 ### Postman
 
