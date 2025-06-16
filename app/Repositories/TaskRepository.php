@@ -17,9 +17,9 @@ class TaskRepository extends BaseRepository
     public function getAllPaginated(int $perPage, array $filters = [])
     {
         return $this->model->with(self::RELATIONS)
-            ->category($filters['category_id'] ?? [])
-            ->priority($filters['priority'] ?? [])
-            ->isCompleted($filters['is_completed'] ?? [])
+            ->category($filters['category_id'] ?? null)
+            ->priority($filters['priority'] ?? null)
+            ->isCompleted($filters['is_completed'] ?? null)
             ->paginate($perPage);
     }
 

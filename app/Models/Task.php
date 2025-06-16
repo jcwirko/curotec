@@ -35,25 +35,26 @@ class Task extends Model
         return $this->belongsToMany(Category::class, 'category_task');
     }
 
-    public function scopeCategory($query, $categoryId)
+    public function scopeCategory($query, ?int $categoryId)
     {
-        if (!$categoryId) {
+        if (is_null($categoryId)) {
             return $query;
         }
+
         return $query->whereHas('categories', function ($q) use ($categoryId) {
             $q->where('categories.id', $categoryId);
         });
     }
 
-    public function scopePriority($query, $priority)
+    public function scopePriority($query, ?string $priority)
     {
-        if (!$priority) {
+        if (is_null($priority)) {
             return $query;
         }
         return $query->where('priority', $priority);
     }
 
-    public function scopeIsCompleted($query, $isCompleted)
+    public function scopeIsCompleted($query, ?bool $isCompleted)
     {
         if (is_null($isCompleted)) {
             return $query;

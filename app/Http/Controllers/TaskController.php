@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Requests\TaskRequest;
 use App\Http\Resources\TaskResource;
 use App\Factories\TaskFactory;
-use App\Models\Task;
 use App\Repositories\TaskRepository;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class TaskController extends Controller
 {
@@ -26,15 +26,17 @@ class TaskController extends Controller
      *
      * @return void
      */
-    public function index(): JsonResponse
+    public function index(): Response
     {
         $rowsPerPage = (int) request()->has('per_page') ? request()->get('per_page') : config('app.pagination.per_page');
 
-        $filters = request()->only(['is_completed', 'category_id', 'priority']); // lo que necesites filtrar
+        $filters = request()->only(['is_completed', 'category_id', 'priority']);
 
         $tasks = $this->taskRepository->getAllPaginated($rowsPerPage, $filters);
 
-        return TaskResource::collection($tasks)->response();
+        return Inertia::render('Tasks/index', [
+            'tasks' => TaskResource::collection($tasks),
+        ]);
     }
 
     /**
