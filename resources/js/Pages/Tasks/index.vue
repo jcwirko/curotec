@@ -1,91 +1,49 @@
 <script setup lang="ts">
-import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table'
-
 import { usePage } from '@inertiajs/vue3'
+import { computed } from 'vue'
+
+import {
+    Card,
+    CardHeader,
+    CardTitle,
+    CardDescription,
+    CardContent,
+    CardFooter
+} from '@/components/ui/card'
+
+// Obtenemos las props del servidor
 const page = usePage()
 
-const invoices = [
-    {
-        invoice: 'INV001',
-        paymentStatus: 'Paid',
-        totalAmount: '$250.00',
-        paymentMethod: 'Credit Card',
-    },
-    {
-        invoice: 'INV002',
-        paymentStatus: 'Pending',
-        totalAmount: '$150.00',
-        paymentMethod: 'PayPal',
-    },
-    {
-        invoice: 'INV003',
-        paymentStatus: 'Unpaid',
-        totalAmount: '$350.00',
-        paymentMethod: 'Bank Transfer',
-    },
-    {
-        invoice: 'INV004',
-        paymentStatus: 'Paid',
-        totalAmount: '$450.00',
-        paymentMethod: 'Credit Card',
-    },
-    {
-        invoice: 'INV005',
-        paymentStatus: 'Paid',
-        totalAmount: '$550.00',
-        paymentMethod: 'PayPal',
-    },
-    {
-        invoice: 'INV006',
-        paymentStatus: 'Pending',
-        totalAmount: '$200.00',
-        paymentMethod: 'Bank Transfer',
-    },
-    {
-        invoice: 'INV007',
-        paymentStatus: 'Unpaid',
-        totalAmount: '$300.00',
-        paymentMethod: 'Credit Card',
-    },
-]
+// Accedemos a las tasks
+const tasks = computed(() => page.props.tasks.data)
+
+console.log('--------------')
+console.log(tasks)
 </script>
 
 <template>
-    <div class="p-6">
-        <h1 class="text-2xl font-bold mb-6 text-gray-800">📝 Lista de Tareas</h1>
+    <div class="p-6 space-y-4">
+        <h1 class="text-2xl font-bold text-gray-800">📝 Lista de tareas</h1>
 
-        <Table class="w-full border rounded-xl shadow-sm overflow-hidden">
-            <TableCaption class="p-4 text-gray-500">Una lista de tus facturas recientes</TableCaption>
+        <div v-if="tasks.length === 0" class="text-muted-foreground">
+            No hay tareas disponibles.
+        </div>
 
-            <TableHeader class="bg-gray-100">
-                <TableRow>
-                    <TableHead class="w-[120px] px-4 py-2">Factura</TableHead>
-                    <TableHead class="px-4 py-2">Estado</TableHead>
-                    <TableHead class="px-4 py-2">Método</TableHead>
-                    <TableHead class="px-4 py-2 text-right">Monto</TableHead>
-                </TableRow>
-            </TableHeader>
-
-            <TableBody>
-                <TableRow v-for="invoice in invoices" :key="invoice.invoice" class="hover:bg-gray-50 transition-colors">
-                    <TableCell class="font-medium px-4 py-2">
-                        {{ invoice.invoice }}
-                    </TableCell>
-                    <TableCell class="px-4 py-2">{{ invoice.paymentStatus }}</TableCell>
-                    <TableCell class="px-4 py-2">{{ invoice.paymentMethod }}</TableCell>
-                    <TableCell class="px-4 py-2 text-right">
-                        {{ invoice.totalAmount }}
-                    </TableCell>
-                </TableRow>
-            </TableBody>
-        </Table>
+        <div v-else class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <Card v-for="task in tasks" :key="task.id" class="transition-shadow hover:shadow-md">
+                <CardHeader>
+                    <CardTitle>{{ task.title }}</CardTitle>
+                    <CardDescription>{{ task.description }}</CardDescription>
+                </CardHeader>
+                <CardContent class="flex justify-between items-center text-sm">
+                    <span class="text-muted-foreground">Prioridad: {{ task.priority }}</span>
+                    <span :class="task.is_completed
+                        ? 'text-green-600 font-semibold'
+                        : 'text-yellow-600 font-semibold'">
+                        {{ task.is_completed ? 'Completada' : 'Pendiente' }}
+                    </span>
+                </CardContent>
+            </Card>
+        </div>
     </div>
 </template>
