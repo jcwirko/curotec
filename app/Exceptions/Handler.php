@@ -25,9 +25,9 @@ class Handler extends ExceptionHandler
         if ($request->expectsJson()) {
 
             if ($exception instanceof ValidationException) {
-               return $this->responseJson([
-                    'error' => 'Validation failed',
-                    'details' => $exception->errors(),
+                return $this->responseJson([
+                    'message' => 'Validation failed',
+                    'errors' => $exception->errors(),
                 ], 422);
             }
 
@@ -56,12 +56,8 @@ class Handler extends ExceptionHandler
         });
     }
 
-    private function responseJson($message, $statusCode = 404, $data = []): \Illuminate\Http\JsonResponse
+    private function responseJson($errors, $statusCode = 404): \Illuminate\Http\JsonResponse
     {
-        return response()->json([
-            'success' => false,
-            'message' => $message,
-            'data' => $data,
-        ], $statusCode);
+        return response()->json($errors, $statusCode);
     }
 }
