@@ -26,16 +26,15 @@
 1.  In path `/path/to/../curotec/`
 2.  In **\_env** file fill in `USER_ID` and `GROUP_ID` with your user and group id. You can find them by running `id` in your terminal.
 3.  Run `make build-app` to build the backend containers.
-    -   In case something fails, such as a seeder, the `make clean` command is executed to reset the environment, followed by `make build-app` to rebuild it.
 4.  Run `make up` to start the containers
 
 ### Front end
-1.  In path `/path/to/../curotec/`
-2.  Run `npm i`
-3.  Run `npm run dev`
+1.  In path `/path/to/../curotec/` outside container
+2.  Run `npm run dev`
 
 ### Ports
 
+-   **Backend API**: `http://localhost:7676/api`
 -   **UI** listens on port **7676**. 
     -   Tasks: http://localhost:7676/tasks
 

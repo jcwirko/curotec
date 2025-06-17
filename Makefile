@@ -19,7 +19,7 @@ clean: docker-clean
 # BUILD TASKS
 # ============================
 
-build-app: copy-laravel-env build-laravel
+build-app: copy-laravel-env build-laravel build-node-modules
 
 copy-laravel-env: ## Copy .env${ENV} to .env if it doesn't already exist
 	$(call print_banner, Checking if .env already exists...)
@@ -29,6 +29,10 @@ copy-laravel-env: ## Copy .env${ENV} to .env if it doesn't already exist
 build-laravel: ## Run Laravel setup script and generate RSA keys
 	$(call print_banner, Running Laravel setup...)
 	docker compose $(DOCKER_COMPOSE_YML) run --rm -it curotec-laravel-builder /usr/local/bin/laravel-setup.sh
+
+build-node-modules:
+	$(call print_banner, installing packages...)
+	npm install
 
 # ============================
 # DOCKER TASKS
