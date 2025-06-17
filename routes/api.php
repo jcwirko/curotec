@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\TaskController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,3 +16,4 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::resource('tasks', TaskController::class);
+Route::get('categories', [CategoryController::class, 'index']);
