@@ -7,6 +7,7 @@ use App\Http\Resources\TaskResource;
 use App\Factories\TaskFactory;
 use App\Repositories\TaskRepository;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class TaskController extends Controller
 {
@@ -82,5 +83,12 @@ class TaskController extends Controller
         $updatedTask = $this->taskRepository->saveWithCategories($task, $data['category_ids'] ?? []);
 
         return (new TaskResource($updatedTask))->response();
+    }
+
+    public function destroy(int $taskId): Response
+    {
+        $this->taskRepository->destroy($taskId);
+
+        return response()->noContent();
     }
 }
