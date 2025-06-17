@@ -8,7 +8,7 @@
             <CardHeader>
                 <CardTitle>{{ task.title }}</CardTitle>
                 <CardDescription>{{ task.description ?? 'Sin descripción' }}</CardDescription>
-                
+
                 <div v-if="task.categories?.length" class="flex flex-wrap gap-1 mt-2">
                     <span v-for="category in task.categories" :key="category.id"
                         class="px-2 py-0.5 bg-gray-100 text-xs text-gray-700 rounded-full">
@@ -36,6 +36,21 @@
         </Card>
     </div>
 
+    <Pagination :items-per-page="meta.per_page" :total="meta.total" :default-page="meta.current_page">
+        <PaginationContent>
+            <PaginationPrevious :disabled="meta.current_page <= 1" @click="emit('changePage', meta.current_page - 1)" />
+
+            <template v-for="i in meta.last_page" :key="i">
+                <PaginationItem @click="emit('changePage', i)" :value="i" :is-active="i === meta.current_page">
+                    {{ i }}
+                </PaginationItem>
+            </template>
+
+            <PaginationNext :disabled="meta.current_page >= meta.last_page"
+                @click="emit('changePage', meta.current_page + 1)" />
+        </PaginationContent>
+    </Pagination>
+
     <DeleteModal v-if="showDeleteModal" :key="taskToDelete?.id" :isVisible="showDeleteModal" :task="taskToDelete"
         @update:isVisible="showDeleteModal = $event" @confirmed="confirmDelete" />
 </template>
@@ -50,26 +65,27 @@ import {
     CardDescription,
     CardContent
 } from '@/components/ui/card'
-import TaskForm from '@/Pages/Tasks/Create/Index.vue'
-import { PencilIcon, TrashIcon, XMarkIcon } from '@heroicons/vue/24/outline'
+import {
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem,
+    PaginationNext,
+    PaginationPrevious,
+} from '@/components/ui/pagination'
+import { PencilIcon, TrashIcon } from '@heroicons/vue/24/outline'
 import DeleteModal from '../Modals/DeleteModal.vue'
 import { deleteTask } from '@/services/taskService'
 
-const props = defineProps<{
-    tasks: Array<{
-        id: number
-        title: string
-        description: string | null
-        priority: string
-        is_completed: boolean
-    }>
+const { tasks, meta } = defineProps<{
+    tasks: { data: any[] },
+    meta: any
 }>()
 
-const emit = defineEmits(['updated', 'deleted'])
+const emit = defineEmits(['updated', 'deleted', 'changePage'])
 
 const showDeleteModal = ref(false)
 const taskToDelete = ref(null)
-
 
 function openDeleteModal(task) {
     taskToDelete.value = task
@@ -93,5 +109,4 @@ async function confirmDelete() {
         console.error(error);
     }
 }
-
 </script>

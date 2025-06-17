@@ -14,7 +14,7 @@
         </RouterLink>
     </div>
 
-    <TaskList :tasks="tasks" @deleted="onTaskDeleted" />
+    <TaskList :tasks="tasks" :meta="meta" @deleted="onTaskDeleted" @changePage="onChangePage" />
 </template>
 
 <script setup lang="ts">
@@ -25,6 +25,7 @@ import TaskList from '@/Pages/Tasks/List/index.vue'
 import { RouterLink } from 'vue-router'
 
 const tasks = ref({ data: [] })
+const meta = ref({})
 
 const filters = ref({
     search: '',
@@ -36,7 +37,9 @@ const filters = ref({
 
 const fetchTasks = async () => {
     try {
-        tasks.value = await getTasks(filters.value)
+        const response = await getTasks(filters.value)
+        tasks.value = response.data
+        meta.value = response.meta
     } catch (error) {
         console.error('Error fetching tasks:', error)
     }
@@ -55,9 +58,11 @@ const clearFilters = () => {
     }
 }
 
-
 function onTaskDeleted(id) {
-    console.log('acaaaa ', id)
     tasks.value = tasks.value.filter(task => task.id !== id);
+}
+
+const onChangePage = (page: number) => {
+    filters.value.page = page
 }
 </script>

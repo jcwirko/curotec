@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const getTasks = async (params = {}) => {
     const response = await axios.get("/api/tasks", { params });
-    return response.data.data;
+    return response.data;
 };
 
 export const createTask = async (taskData) => {
@@ -11,13 +11,13 @@ export const createTask = async (taskData) => {
 };
 
 export function updateTask(id, data) {
-    return axios.patch(`/api/tasks/${id}`, data)
+    return axios.patch(`/api/tasks/${id}`, data);
 }
 
 export function getTask(id) {
-    return axios.get(`/api/tasks/${id}`)
+    return axios.get(`/api/tasks/${id}`);
 }
 
 export function deleteTask(id) {
-    return axios.delete(`/api/tasks/${id}`)
+    return axios.delete(`/api/tasks/${id}`);
 }
