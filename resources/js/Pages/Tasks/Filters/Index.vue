@@ -1,27 +1,3 @@
-<script setup lang="ts">
-import { defineProps, defineEmits } from 'vue'
-
-const props = defineProps<{
-    filters: {
-        search: string
-        priority: string
-        is_completed: string
-        per_page: number
-        page: number
-    }
-}>()
-
-const emit = defineEmits(['update:filters', 'clear'])
-
-const updateFilter = (key: keyof typeof props.filters, value: any) => {
-    emit('update:filters', { ...props.filters, [key]: value })
-}
-
-const clearFilters = () => {
-    emit('clear')
-}
-</script>
-
 <template>
     <div class="grid md:grid-cols-4 gap-4 mb-10">
         <div class="flex flex-col">
@@ -61,3 +37,27 @@ const clearFilters = () => {
         </button>
     </div>
 </template>
+
+<script setup lang="ts">
+import { defineProps, defineEmits } from 'vue'
+
+const props = defineProps<{
+    filters: {
+        search: string
+        priority: string
+        is_completed: string
+        per_page: number
+        page: number
+    }
+}>()
+
+const emit = defineEmits(['update:filters', 'clear'])
+
+const updateFilter = (key: keyof typeof props.filters, value: any) => {
+    emit('update:filters', { ...props.filters, [key]: value })
+}
+
+const clearFilters = () => {
+    emit('clear')
+}
+</script>

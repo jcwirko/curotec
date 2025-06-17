@@ -1,4 +1,3 @@
-<!-- src/components/ConfirmDeleteModal.vue -->
 <template>
     <div v-if="isVisible" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
         <div class="bg-white rounded-lg p-6 w-full max-w-xs text-center">
