@@ -38,6 +38,10 @@
 -   **UI** listens on port **7676**. 
     -   Tasks: http://localhost:7676/tasks
 
+### Docs
+
+I added a docs folder at the root of the project, where you can find the scaffolding and the considerations I took into account when completing the assessment.
+
 ### Postman
 
 Within the project, you’ll find a _Postman_ folder containing a **_collection_** and an **_environment configuration file_** that I use to test the API. Import these files into Postman.

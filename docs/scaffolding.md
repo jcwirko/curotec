@@ -17,7 +17,7 @@
 
 ## Introduction
 
-This document outlines the structure of our **Assessment Project**, built with Laravel 10, Vue, and Inertia.js.  
+This document outlines the structure of our **Assessment Project**, built with Laravel 10, Vue.
 The design prioritizes modularity, scalability, and maintainability.
 
 I won’t go into detail about Laravel’s default folder structure, as it's well known. Instead, I’ll focus on the custom parts of the implementation.

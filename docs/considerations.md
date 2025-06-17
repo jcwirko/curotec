@@ -1,5 +1,13 @@
 # Considerations
 
+## Setup
+
+I took some extra time to create a setup using Docker and a Makefile, as this approach simplifies the entire setup process and leaves the application ready for testing.
+
+The Makefile is located in the root of the project, and the README includes instructions on how to run it.
+
+This setup handles building the Laravel app, running migrations and seeders, and installing npm packages to get you started with testing right away.
+
 ## Design Patterns
 
 To ensure a proper separation of concerns, I have implemented a few design patterns:
@@ -57,8 +65,6 @@ To improve performance under the assumption of large data volumes:
 - Implemented **pagination** to reduce payload size and DB load.
 - Suggested possible use of **caching** (e.g., Redis) or **rate limiting** in high-traffic scenarios.
 
-On the frontend, using **debounce** when typing prevents excessive requests per keystroke, further optimizing performance.
-
 ---
 
 ## Query Scopes
@@ -72,3 +78,10 @@ return $this->model->with(self::RELATIONS)
     ->isCompleted($filters['is_completed'] ?? null)
     ->paginate($perPage);
 ```
+
+
+## UI
+
+I kept the UI as simple as possible, organizing everything related to Tasks into subfolders. I also added Shadcn and Tailwind to provide some styling.
+
+Regarding state management, I didn’t implement it here to avoid delaying the task, but I have experience working with Vuex (Vue) and Zustand (React).
