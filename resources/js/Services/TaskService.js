@@ -13,3 +13,11 @@ export const createTask = async (taskData) => {
 export function updateTask(id, data) {
     return axios.patch(`/api/tasks/${id}`, data)
 }
+
+export function getTask(id) {
+    return axios.get(`/api/tasks/${id}`)
+}
+
+export function deleteTask(id) {
+    return axios.delete(`/api/tasks/${id}`)
+}

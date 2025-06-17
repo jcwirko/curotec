@@ -1,50 +1,3 @@
-<script setup lang="ts">
-import { ref } from 'vue'
-import { defineProps, defineEmits } from 'vue'
-import {
-    Card,
-    CardHeader,
-    CardTitle,
-    CardDescription,
-    CardContent
-} from '@/components/ui/card'
-import TaskForm from '@/Pages/Tasks/Create/Index.vue'
-import { PencilIcon, TrashIcon, XMarkIcon } from '@heroicons/vue/24/outline'
-
-const props = defineProps<{
-    tasks: Array<{
-        id: number
-        title: string
-        description: string | null
-        priority: string
-        is_completed: boolean
-    }>
-}>()
-
-const emit = defineEmits(['updated', 'deleted'])
-
-const showDeleteModal = ref(false)
-
-const taskToEdit = ref(null)
-const taskToDelete = ref(null)
-
-function openDeleteModal(task) {
-    taskToDelete.value = task
-    showDeleteModal.value = true
-}
-
-function closeDeleteModal() {
-    showDeleteModal.value = false
-    taskToDelete.value = null
-}
-
-function confirmDelete() {
-    emit('deleted', taskToDelete.value.id)
-    closeDeleteModal()
-}
-
-</script>
-
 <template>
     <div v-if="tasks.length === 0" class="text-muted-foreground">
         No tasks available
@@ -75,19 +28,62 @@ function confirmDelete() {
         </Card>
     </div>
 
-    <!-- Modal eliminar -->
-    <div v-if="showDeleteModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-        <div class="bg-white rounded-lg p-6 w-full max-w-xs text-center">
-            <h3 class="text-lg font-semibold mb-4">¿Desea eliminar esta tarea?</h3>
-            <p class="mb-6">{{ taskToDelete?.title }}</p>
-            <div class="flex justify-center gap-4">
-                <button @click="closeDeleteModal" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">
-                    Cancelar
-                </button>
-                <button @click="confirmDelete" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
-                    Eliminar
-                </button>
-            </div>
-        </div>
-    </div>
+    <DeleteModal v-if="showDeleteModal" :key="taskToDelete?.id" :isVisible="showDeleteModal" :task="taskToDelete"
+        @update:isVisible="showDeleteModal = $event" @confirmed="confirmDelete" />
 </template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { defineProps, defineEmits } from 'vue'
+import {
+    Card,
+    CardHeader,
+    CardTitle,
+    CardDescription,
+    CardContent
+} from '@/components/ui/card'
+import TaskForm from '@/Pages/Tasks/Create/Index.vue'
+import { PencilIcon, TrashIcon, XMarkIcon } from '@heroicons/vue/24/outline'
+import DeleteModal from '../Modals/DeleteModal.vue'
+import { deleteTask } from '@/services/taskService'
+
+const props = defineProps<{
+    tasks: Array<{
+        id: number
+        title: string
+        description: string | null
+        priority: string
+        is_completed: boolean
+    }>
+}>()
+
+const emit = defineEmits(['updated', 'deleted'])
+
+const showDeleteModal = ref(false)
+const taskToDelete = ref(null)
+
+
+function openDeleteModal(task) {
+    taskToDelete.value = task
+    showDeleteModal.value = true
+}
+
+function closeDeleteModal() {
+    showDeleteModal.value = false
+    taskToDelete.value = null
+}
+
+async function confirmDelete() {
+    try {
+        const taskId = taskToDelete.value.id
+        await deleteTask(taskId);
+        closeDeleteModal();
+        emit('deleted', taskId);
+        alert('Task deleted successfully');
+    } catch (error) {
+        alert('Failed to delete task');
+        console.error(error);
+    }
+}
+
+</script>

@@ -1,16 +1,14 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { createTask, updateTask } from '@/services/TaskService'
+import { ref, onMounted } from 'vue'
+import { createTask, getTask, updateTask } from '@/services/TaskService'
 import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
 const router = useRouter()
-
-const taskId = route.params.id
 const task = ref(null)
+const taskId = route.params.id
 const errors = ref({})
-
-const emit = defineEmits(['created', 'cancelled'])
+const isLoading = ref(false)
 
 const form = ref({
     title: '',
@@ -18,6 +16,8 @@ const form = ref({
     priority: 'medium',
     is_completed: false,
 })
+
+const emit = defineEmits(['created', 'cancelled'])
 
 const props = defineProps<{
     task?: {
@@ -29,16 +29,32 @@ const props = defineProps<{
     } | null
 }>()
 
+onMounted(async () => {
+    if (taskId) {
+        try {
+            isLoading.value = true
+            const response = await getTask(taskId)
+            form.value = response.data.data
+        } catch (err) {
+            error.value = 'Failed to load the task'
+            console.error(err)
+        } finally {
+            isLoading.value = false
+        }
+    }
+})
+
 function submit() {
     errors.value = {}
 
-    const request = task.value
-        ? updateTask(task.value.id, form.value)
+    const request = taskId
+        ? updateTask(taskId, form.value)
         : createTask(form.value)
 
     request
         .then(response => {
             emit('created', response.data)
+            alert(`Task ${taskId ? 'updated' : 'created'} successfully`)
             if (!props.task) {
                 router.push('/tasks')
             }

@@ -1,3 +1,22 @@
+<template>
+    <h1 class="text-4xl font-extrabold mb-6 text-gray-900 border-b pb-2">Filters</h1>
+
+    <TaskFilters v-model:filters="filters" @clear="clearFilters" />
+
+    <div class="flex justify-between items-center mb-6 border-b pb-2">
+        <h1 class="text-4xl font-extrabold text-gray-900">
+            Tasks List
+        </h1>
+
+        <RouterLink to="/tasks/create"
+            class="px-3 py-2 text-white bg-blue-600 rounded hover:bg-blue-700 transition text-sm">
+            ➕ New Task
+        </RouterLink>
+    </div>
+
+    <TaskList :tasks="tasks" @deleted="onTaskDeleted" />
+</template>
+
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
 import { getTasks } from '@/services/taskService'
@@ -35,23 +54,10 @@ const clearFilters = () => {
         page: 1
     }
 }
+
+
+function onTaskDeleted(id) {
+    console.log('acaaaa ', id)
+    tasks.value = tasks.value.filter(task => task.id !== id);
+}
 </script>
-
-<template>
-    <h1 class="text-4xl font-extrabold mb-6 text-gray-900 border-b pb-2">Filters</h1>
-
-    <TaskFilters v-model:filters="filters" @clear="clearFilters" />
-
-    <div class="flex justify-between items-center mb-6 border-b pb-2">
-        <h1 class="text-4xl font-extrabold text-gray-900">
-            Tasks List
-        </h1>
-
-        <RouterLink to="/tasks/create"
-            class="px-3 py-2 text-white bg-blue-600 rounded hover:bg-blue-700 transition text-sm">
-            ➕ New Task
-        </RouterLink>
-    </div>
-
-    <TaskList :tasks="tasks" />
-</template>
