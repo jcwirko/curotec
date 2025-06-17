@@ -6,6 +6,10 @@
 
 <p style="font-size: 15px">This application corresponds to a technical test for a Software Engineer position.</p>
 
+## Dependencies
+- yarn v1.22.22
+- node v22.14.0
+
 # Instalation
 
 ### Clone Repositories
@@ -25,10 +29,15 @@
     -   In case something fails, such as a seeder, the `make clean` command is executed to reset the environment, followed by `make build-app` to rebuild it.
 4.  Run `make up` to start the containers
 
+### Front end
+1.  In path `/path/to/../curotec/`
+2.  Run `npm i`
+3.  Run `npm run dev`
+
 ### Ports
 
--   **Backend API**: http://localhost:7676/api
--   **UI** listens on port **7676**: http://localhost:7676.
+-   **UI** listens on port **7676**. 
+    -   Tasks: http://localhost:7676/tasks
 
 ### Postman
 

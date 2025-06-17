@@ -8,7 +8,16 @@
             <CardHeader>
                 <CardTitle>{{ task.title }}</CardTitle>
                 <CardDescription>{{ task.description ?? 'Sin descripción' }}</CardDescription>
+
+                <!-- Categorías debajo de la descripción -->
+                <div v-if="task.categories?.length" class="flex flex-wrap gap-1 mt-2">
+                    <span v-for="category in task.categories" :key="category.id"
+                        class="px-2 py-0.5 bg-gray-100 text-xs text-gray-700 rounded-full">
+                        {{ category.name }}
+                    </span>
+                </div>
             </CardHeader>
+
             <CardContent class="flex justify-between items-center text-sm">
                 <span class="text-muted-foreground">Prioridad: {{ task.priority }}</span>
                 <span :class="task.is_completed ? 'text-green-600 font-semibold' : 'text-yellow-600 font-semibold'">
