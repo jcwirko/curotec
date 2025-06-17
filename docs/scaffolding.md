@@ -62,6 +62,10 @@ Each subfolder inside `app/` represents a specific layer or concern within the b
 - **`factories/`**: encapsulate the creation logic of objects, 
 - **`repositories/`**: Encapsulates data access logic, serving as an abstraction layer between the database and the rest of the application.
 
+Depending on the size of the project, we could consider two alternatives:
+	1.	Inside app/models, organize folders related to business logic, such as entities, factories, enums, etc.
+	2.	Alternatively, we could have a modules folder where each subfolder represents an entity and contains everything related to that entity only—its own factories, enums, repositories, and so on.
+
 ---
 
 ## Docker Configuration
