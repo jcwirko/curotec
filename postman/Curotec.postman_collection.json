@@ -110,7 +110,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\":\"create task crud\",\n    \"description\":\"to make this task you should use laravel, vue and inertia\",\n    \"priority\":\"high\",\n    \"due_date\":\"2024-10-13\",\n    \"is_complete\":0\n}",
+							"raw": "{\n    \"title\":\"create task crud\",\n    \"description\":\"to make this task you should use laravel, vue and inertia\",\n    \"priority\":\"medium\",\n    \"due_date\":\"2024-10-13\",\n    \"is_completed\":1,\n    \"category_ids\":[1,2,3]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -160,7 +160,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\":\"task updated\",\n    \"description\":\"description updated\",\n    \"priority\":\"medium\",\n    \"due_date\":\"2024-10-11\",\n    \"is_completed\": 1\n}",
+							"raw": "{\n    \"title\":\"task updated\",\n    \"description\":\"description updated\",\n    \"priority\":\"medium\",\n    \"due_date\":\"2024-10-11\",\n    \"is_completed\": 1,\n    \"category_ids\":[1,2]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -168,7 +168,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:7676/api/tasks/1",
+							"raw": "http://localhost:7676/api/tasks/2",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -177,7 +177,7 @@
 							"path": [
 								"api",
 								"tasks",
-								"1"
+								"2"
 							]
 						}
 					},
