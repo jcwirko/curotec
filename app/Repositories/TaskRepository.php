@@ -20,6 +20,7 @@ class TaskRepository extends BaseRepository
             ->category($filters['category_id'] ?? null)
             ->priority($filters['priority'] ?? null)
             ->isCompleted($filters['is_completed'] ?? null)
+            ->orderBy('title')
             ->paginate($perPage);
     }
 
