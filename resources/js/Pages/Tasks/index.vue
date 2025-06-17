@@ -1,49 +1,57 @@
 <script setup lang="ts">
-import { usePage } from '@inertiajs/vue3'
-import { computed } from 'vue'
+import { ref, onMounted, watch } from 'vue'
+import { getTasks } from '@/services/taskService'
+import TaskFilters from '@/Pages/Tasks/Filters/Index.vue'
+import TaskList from '@/Pages/Tasks/List/index.vue'
+import { RouterLink } from 'vue-router'
 
-import {
-    Card,
-    CardHeader,
-    CardTitle,
-    CardDescription,
-    CardContent,
-    CardFooter
-} from '@/components/ui/card'
+const tasks = ref({ data: [] })
 
-// Obtenemos las props del servidor
-const page = usePage()
+const filters = ref({
+    search: '',
+    priority: '',
+    is_completed: '',
+    per_page: 10,
+    page: 1
+})
 
-// Accedemos a las tasks
-const tasks = computed(() => page.props.tasks.data)
+const fetchTasks = async () => {
+    try {
+        tasks.value = await getTasks(filters.value)
+    } catch (error) {
+        console.error('Error fetching tasks:', error)
+    }
+}
 
-console.log('--------------')
-console.log(tasks)
+onMounted(fetchTasks)
+watch(filters, fetchTasks, { deep: true })
+
+const clearFilters = () => {
+    filters.value = {
+        search: '',
+        priority: '',
+        is_completed: '',
+        per_page: 10,
+        page: 1
+    }
+}
 </script>
 
 <template>
-    <div class="p-6 space-y-4">
-        <h1 class="text-2xl font-bold text-gray-800">📝 Lista de tareas</h1>
+    <h1 class="text-4xl font-extrabold mb-6 text-gray-900 border-b pb-2">Filters</h1>
 
-        <div v-if="tasks.length === 0" class="text-muted-foreground">
-            No hay tareas disponibles.
-        </div>
+    <TaskFilters v-model:filters="filters" @clear="clearFilters" />
 
-        <div v-else class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <Card v-for="task in tasks" :key="task.id" class="transition-shadow hover:shadow-md">
-                <CardHeader>
-                    <CardTitle>{{ task.title }}</CardTitle>
-                    <CardDescription>{{ task.description }}</CardDescription>
-                </CardHeader>
-                <CardContent class="flex justify-between items-center text-sm">
-                    <span class="text-muted-foreground">Prioridad: {{ task.priority }}</span>
-                    <span :class="task.is_completed
-                        ? 'text-green-600 font-semibold'
-                        : 'text-yellow-600 font-semibold'">
-                        {{ task.is_completed ? 'Completada' : 'Pendiente' }}
-                    </span>
-                </CardContent>
-            </Card>
-        </div>
+    <div class="flex justify-between items-center mb-6 border-b pb-2">
+        <h1 class="text-4xl font-extrabold text-gray-900">
+            Tasks List
+        </h1>
+
+        <RouterLink to="/tasks/create"
+            class="px-3 py-2 text-white bg-blue-600 rounded hover:bg-blue-700 transition text-sm">
+            ➕ New Task
+        </RouterLink>
     </div>
+
+    <TaskList :tasks="tasks" />
 </template>
