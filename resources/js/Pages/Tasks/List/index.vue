@@ -8,8 +8,7 @@
             <CardHeader>
                 <CardTitle>{{ task.title }}</CardTitle>
                 <CardDescription>{{ task.description ?? 'Sin descripción' }}</CardDescription>
-
-                <!-- Categorías debajo de la descripción -->
+                
                 <div v-if="task.categories?.length" class="flex flex-wrap gap-1 mt-2">
                     <span v-for="category in task.categories" :key="category.id"
                         class="px-2 py-0.5 bg-gray-100 text-xs text-gray-700 rounded-full">
