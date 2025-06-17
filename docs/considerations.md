@@ -44,6 +44,12 @@ To avoid issues caused by **typos**, I created an `enums/` folder under `app/`, 
 
 ---
 
+## Databases
+
+There are two types of environment files: .env.local, which is copied to .env and used by the application, and .env.testing, which is used exclusively for testing.
+
+I set this separation because I prefer to keep the application database isolated from the testing database. In the testing database, only migrations are run without seeders, and all necessary data for each test is created within the tests themselves. Once a test completes, the database is reset to its previous empty state.
+
 ## Testing
 
 I usually follow a **Test-Driven Development (TDD)** approach to ensure that edge cases are covered and the code remains clean and maintainable. Tests often guide future refactors.
