@@ -8,7 +8,7 @@
     "devDependencies": {
         "@vitejs/plugin-vue": "^5.2.4",
         "autoprefixer": "^10.4.21",
-        "axios": "^1.6.4",
+        "axios": "^1.10.0",
         "laravel-vite-plugin": "^1.0.0",
         "postcss": "^8.5.5",
         "shadcn-vue": "^2.2.0",
@@ -16,13 +16,14 @@
         "vite": "^5.0.0"
     },
     "dependencies": {
-        "@inertiajs/vue3": "^2.0.12",
+        "@heroicons/vue": "^2.2.0",
         "@vueuse/core": "^13.3.0",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "lucide-vue-next": "^0.515.0",
         "reka-ui": "^2.3.1",
         "tailwind-merge": "^3.3.1",
-        "tailwindcss-animate": "^1.0.7"
+        "tailwindcss-animate": "^1.0.7",
+        "vue-router": "^4.5.1"
     }
 }
