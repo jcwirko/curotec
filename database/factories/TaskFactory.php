@@ -28,7 +28,7 @@ class TaskFactory extends Factory
             'description' => fake()->optional()->paragraph(),
             'priority' => fake()->randomElement(TaskPriorityEnum::values()),
             'due_date' => fake()->optional()->date(),
-            'is_completed' => fake()->boolean(20), // 20% true, 80% false
+            'is_completed' => fake()->boolean(50),
             'created_at' => now(),
             'updated_at' => now(),
         ];
