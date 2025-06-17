@@ -13,14 +13,12 @@ test('it fails when required fields are missing on task creation', function () {
     $response->assertStatus(422);
 
     $response->assertJson([
-        'success' => false,
-        'message' => [
-            'error' => 'Validation failed',
-            'details' => [
-                'title' => ['The title field is required.'],
-            ],
+        'message' => 'Validation failed',
+        'errors' => [
+            "title" => [
+                "The title field is required."
+            ]
         ],
-        'data' => [],
     ]);
 });
 
@@ -33,13 +31,11 @@ test('it fails with invalid priority on task creation', function () {
     $response->assertStatus(422);
 
     $response->assertJson([
-        'success' => false,
-        'message' => [
-            'error' => 'Validation failed',
-            'details' => [
-                'priority' => ['The selected priority is invalid.'],
-            ],
+        'message' => 'Validation failed',
+        'errors' => [
+            "priority" => [
+                "The selected priority is invalid."
+            ]
         ],
-        'data' => [],
     ]);
 });
