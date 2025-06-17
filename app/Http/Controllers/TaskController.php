@@ -7,8 +7,6 @@ use App\Http\Resources\TaskResource;
 use App\Factories\TaskFactory;
 use App\Repositories\TaskRepository;
 use Illuminate\Http\JsonResponse;
-use Inertia\Inertia;
-use Inertia\Response;
 
 class TaskController extends Controller
 {
@@ -26,7 +24,7 @@ class TaskController extends Controller
      *
      * @return void
      */
-    public function index(): Response
+    public function index(): JsonResponse
     {
         $rowsPerPage = (int) request()->has('per_page') ? request()->get('per_page') : config('app.pagination.per_page');
 
@@ -34,9 +32,7 @@ class TaskController extends Controller
 
         $tasks = $this->taskRepository->getAllPaginated($rowsPerPage, $filters);
 
-        return Inertia::render('Tasks/index', [
-            'tasks' => TaskResource::collection($tasks),
-        ]);
+        return TaskResource::collection($tasks)->response();
     }
 
     /**
