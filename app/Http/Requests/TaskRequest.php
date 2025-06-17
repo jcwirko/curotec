@@ -17,7 +17,7 @@ class TaskRequest extends BaseRequest
     public function rules(): array
     {
         $rules = [
-            'title' => ['string', 'max:255'],
+            'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'priority' => [Rule::in(TaskPriorityEnum::values())],
             'due_date' => ['nullable', 'date'],
